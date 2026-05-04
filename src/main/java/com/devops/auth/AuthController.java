@@ -21,3 +21,9 @@ public class AuthController {
         return service.login(user);
     }
 }
+package com.devops.auth.controller;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+import com.devops.auth.service.AuthService;
+import com.devops.auth.entity.User;
