@@ -1,38 +1,35 @@
 package com.devops.auth.security;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import javax.crypto.SecretKey;
+import org.springframework.stereotype.Service;
 
 import java.util.Date;
 
-import javax.crypto.SecretKey;
-
+@Service
 public class JwtService {
 
     private final SecretKey key =
             Keys.hmacShaKeyFor(
-              "mysecretkeymysecretkeymysecretkey12".getBytes());
+                    "mysecretkeymysecretkeymysecretkey123".getBytes());
 
-    public String generateToken(String username){
+    public String generateToken(String username) {
 
         return Jwts.builder()
-                .setSubject(username)
-                .setIssuedAt(new Date())
-                .setExpiration(
-                        new Date(
-                                System.currentTimeMillis()
-                                        + 86400000))
+                .subject(username)
+                .issuedAt(new Date())
                 .signWith(key)
                 .compact();
     }
 
-    public String extractUsername(String token){
+    public String extractUsername(String token) {
 
-        return Jwts.parserBuilder()
-                .setSigningKey(key)
+        return Jwts.parser()
+                .verifyWith(key)
                 .build()
-                .parseClaimsJws(token)
-                .getBody()
+                .parseSignedClaims(token)
+                .getPayload()
                 .getSubject();
     }
 }
