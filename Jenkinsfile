@@ -9,8 +9,8 @@ pipeline {
         stage('Checkout') {
 
             steps {
-                git branch: 'develop',
-                url: 'YOUR_GITHUB_REPO'
+    
+                git branch: 'main', url: 'https://github.com/Gurraiah123/auth-service.git'
             }
         }
 
@@ -32,15 +32,15 @@ pipeline {
 
             steps {
 
-                sshagent(['ec2-key']) {
+                sshagent(['Jenkins-agent-key']) {
 
                     sh '''
 
                     scp \
                     target/*.jar \
-                    ubuntu@EC2_PUBLIC_IP:/home/ubuntu/app/
+                    ubuntu@54.169.34.180:/home/ubuntu/app/
 
-                    ssh ubuntu@EC2_PUBLIC_IP "
+                    ssh ubuntu@54.169.34.180 "
 
                     pkill java || true
 
