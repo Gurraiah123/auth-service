@@ -6,48 +6,45 @@ pipeline {
 
     stages {
 
-        stage('Checkout') {
-
+        stage('Verify Java') {
             steps {
-    
-                git branch: 'main', url: 'https://github.com/Gurraiah123/auth-service.git'
+                sh 'java -version'
+                sh 'javac -version'
+                sh 'mvn -version'
+            }
+        }
+
+        stage('Checkout') {
+            steps {
+                git branch: 'main',
+                    url: 'https://github.com/Gurraiah123/auth-service.git'
             }
         }
 
         stage('Build') {
-
             steps {
                 sh 'mvn clean package'
             }
         }
 
         stage('Test') {
-
             steps {
                 sh 'mvn test'
             }
         }
 
         stage('Deploy') {
-
             steps {
 
-                sshagent(['Jenkins-agent-key']) {
+                sshagent(['jenkins-agent-key']) {
 
                     sh '''
+                        scp target/*.jar ubuntu@54.169.34.180:/home/ubuntu/app/
 
-                    scp \
-                    target/*.jar \
-                    ubuntu@54.169.34.180:/home/ubuntu/app/
-
-                    ssh ubuntu@54.169.34.180 "
-
-                    pkill java || true
-
-                    nohup java \
-                    -jar /home/ubuntu/app/*.jar &
-
-                    "
+                        ssh ubuntu@54.169.34.180 "
+                            pkill java || true
+                            nohup java -jar /home/ubuntu/app/*.jar >/dev/null 2>&1 &
+                        "
                     '''
                 }
             }
